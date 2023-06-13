@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
+    <link rel="stylesheet" href="src/index.css">
+  <title>Activation du clavier virtuel</title> 
+</head>
+<body>
+  <form method="post"  name="myForm" onsubmit="validateForm()" >
+    <input type="text" class="input" id="myInput"  name="fname" onclick="activerClavierVirtuel()">   
+    <div class="simple-keyboard" style="position:fixed; bottom:0px;"></div>
+  </form>
+
+  	<script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.js"></script>
+   <script>
+   let keyboard = window.SimpleKeyboard.default;
+
+    function activerClavierVirtuel() {
+      keyboard = new window.SimpleKeyboard.default({
+         onChange: input => onChange(input),
+         onKeyPress: button => onKeyPress(button)
+      });
+    }
+
+    function onChange(input) {
+      document.querySelector("input").value = input;
+      console.log("Input changed", input);
+    }
+
+
+    function onKeyPress(button) {
+      console.log("Button pressed", button);
+      if (button === "{shift}" || button === "{lock}") handleShift();
+      if (button === "{enter}") handleEnter();
+    }
+
+    function handleShift() {
+      let currentLayout = keyboard.options.layoutName;
+      let shiftToggle = currentLayout === "default" ? "shift" : "default";
+
+      keyboard.setOptions({
+        layoutName: shiftToggle
+      });
+    }
+
+    function handleEnter() {
+      console.log("Enter");
+      document.querySelector("input").value += "\n";
+         validateForm();
+    }
+
+    function validateForm() {
+      var x = document.forms["myForm"]["fname"].value;
+      if (x == "") {
+        alert("Name must be filled out");
+        return false;
+      }
+      console.log("Form submitted " + x);
+      // une fois le formulaire soumis, on peut le réinitialiser
+      resetFormAndKeyboard();
+    }
+    
+    function resetFormAndKeyboard() {
+        document.getElementById("myInput").value = "";
+        keyboard.clearInput();      
+        // on ferme le clavier virtuel après avoir soumis le formulaire
+        keyboard.destroy();
+    }
+
+  </script>
+</body>
+</html>
